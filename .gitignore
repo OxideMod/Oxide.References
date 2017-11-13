@@ -8,10 +8,6 @@
 [Oo]bj/
 [Rr]elease/
 [Rr]eleases/
-build/
-bld/
-x64/
-x86/
 
 # Build testing
 ## MSTest
@@ -27,8 +23,9 @@ TestResult.xml
 !**/packages/build/
 !**/packages/repositories.config
 
-# Project-specific files
-.deploy
+# OS-specific files
+.*DS_Store
+._*
 
 # Roslyn caches
 *.ide/
