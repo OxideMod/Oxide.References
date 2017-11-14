@@ -26,8 +26,10 @@
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="Newtonsoft.Json" Version="8.0.3" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
-    <Content Include="Dependencies\x64\*" PackagePath="content\x64" />
-    <Content Include="Dependencies\x86\*" PackagePath="content\x86" />
+    <Content Include="Dependencies\x64\*.*" PackagePath="content\x64" />
+    <Content Include="Dependencies\x86\*.*" PackagePath="content\x86" />
+    <Content Include="Dependencies\Mono.*" Exclude="Dependencies\Mono.Posix.dll" PackagePath="content" />
+    <Content Include="Dependencies\System.*" PackagePath="content" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Target Name="AfterBuild">
@@ -44,8 +46,8 @@
       <MergeAssemblies Include="Dependencies\protobuf-net.dll" />
     </ItemGroup>
     <PropertyGroup>
-      <OutputAssembly>$(OutputPath)Oxide.References.dll</OutputAssembly>
-      <Merger>$(SolutionDir)packages\ILRepack\2.0.13\tools\ILRepack.exe</Merger>
+      <OutputAssembly>$(OutputPath)\Oxide.References.dll</OutputAssembly>
+      <Merger>$(SolutionDir)\packages\ILRepack\2.0.13\tools\ILRepack.exe</Merger>
     </PropertyGroup>
     <Message Text="MERGING: @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
     <Exec Command="$(Merger) /lib:$(OutputPath) /out:&quot;$(OutputAssembly)&quot; @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
