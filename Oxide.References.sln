@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 15.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.References", "Oxide.References\Oxide.References.csproj", "{7009BBCB-8CA4-49EC-BE95-B27C07771CDF}"
+Project("{034A4B97-5669-4672-A7B8-70D1CD400799}") = "Oxide.References", "Oxide.References\Oxide.References.csproj", "{7009BBCB-8CA4-49EC-BE95-B27C07771CDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
