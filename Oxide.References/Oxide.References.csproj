@@ -14,7 +14,6 @@
     <PackageTags>api framework gaming modding plugins</PackageTags>
     <TargetFrameworks>net461;net45;net40;net35</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
     <!--
       Workaround for targeting net35 with dotnet CLI
       https://github.com/Microsoft/msbuild/issues/1333#issuecomment-296346352
@@ -27,10 +26,10 @@
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="Newtonsoft.Json" Version="8.0.3" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
-    <Content Include="Dependencies\x64\*.*" PackagePath="content\x64" />
-    <Content Include="Dependencies\x86\*.*" PackagePath="content\x86" />
-    <Content Include="Dependencies\Mono.*" Exclude="Dependencies\Mono.Posix.dll" PackagePath="content" />
-    <Content Include="Dependencies\System.*" PackagePath="content" />
+    <Content Include="Dependencies\x64\*.*" PackagePath="lib\any\x64" />
+    <Content Include="Dependencies\x86\*.*" PackagePath="lib\any\x86" />
+    <Content Include="Dependencies\Mono.*" Exclude="Dependencies\Mono.Posix.dll" PackagePath="lib\any" />
+    <Content Include="Dependencies\System.*" PackagePath="lib\any" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Target Name="AfterBuild">
