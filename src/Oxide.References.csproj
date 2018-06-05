@@ -12,7 +12,7 @@
     <PackageIconUrl>https://avatars1.githubusercontent.com/u/10712027?s=64</PackageIconUrl>
     <Copyright>Copyright (c) 2014-$([System.DateTime]::Now.Year) $(Authors)</Copyright>
     <PackageTags>api framework gaming modding plugins</PackageTags>
-    <TargetFrameworks>net461;net45;net40;net35</TargetFrameworks>
+    <TargetFrameworks>net46;net45;net40;net35</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <!--
       Workaround for targeting net35 with dotnet CLI
@@ -25,19 +25,19 @@
     <PackageReference Include="ILRepack" Version="2.0.13" />
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
-    <Content Include="Dependencies\x64\*.*" PackagePath="lib\any\x64" />
-    <Content Include="Dependencies\x86\*.*" PackagePath="lib\any\x86" />
     <Content Include="Dependencies\Mono.*" Exclude="Dependencies\Mono.Posix.dll" PackagePath="lib\any" />
     <Content Include="Dependencies\System.*" PackagePath="lib\any" />
+    <Content Include="Dependencies\x64\*.*" PackagePath="lib\any\x64" />
+    <Content Include="Dependencies\x86\*.*" PackagePath="lib\any\x86" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Target Name="AfterBuild">
     <ItemGroup>
       <MergeAssemblies Include="$(OutputPath)\Oxide.References.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' != 'net461'" Include="..\packages\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' != 'net461'" Include="..\packages\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' == 'net461'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' == 'net461'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
       <MergeAssemblies Include="..\packages\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
       <MergeAssemblies Include="Dependencies\Mono.Posix.dll" />
       <MergeAssemblies Include="Dependencies\Newtonsoft.Json.dll" /> <!-- NuGet packages targeted for Silverlight, which causes errors with GetUtcOffset -->
