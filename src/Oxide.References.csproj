@@ -40,7 +40,7 @@
       <MergeAssemblies Condition="'$(TargetFramework)' == 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
       <MergeAssemblies Include="..\packages\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
       <MergeAssemblies Include="Dependencies\Mono.Posix.dll" />
-      <MergeAssemblies Include="Dependencies\Newtonsoft.Json.dll" /> <!-- NuGet packages targeted for Silverlight, which causes errors with GetUtcOffset -->
+      <MergeAssemblies Include="Dependencies\Newtonsoft.Json.dll" /> <!-- .NET 3.5; doesn't have the System.Numerics reference that Mono is missing -->
       <MergeAssemblies Include="Dependencies\protobuf-net.dll" />
     </ItemGroup>
     <PropertyGroup>
