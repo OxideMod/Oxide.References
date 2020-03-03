@@ -1,28 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <Import Project="..\netfx.props" />
   <PropertyGroup>
     <Version>2.0.0</Version>
     <AssemblyName>Oxide.References</AssemblyName>
-    <Authors>Oxide and Contributors</Authors>
+    <Authors>Oxide Team and Contributors</Authors>
+    <Copyright>(c) 2013-$([System.DateTime]::Now.Year) $(Authors)</Copyright>
     <Description>Dependency references for the Oxide modding framework</Description>
     <RepositoryUrl>https://github.com/OxideMod/Oxide.References</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/OxideMod/Oxide.References/blob/develop/LICENSE.md</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/OxideMod/Oxide.References</PackageProjectUrl>
-    <PackageIconUrl>https://avatars1.githubusercontent.com/u/10712027?s=64</PackageIconUrl>
-    <Copyright>Copyright (c) 2014-$([System.DateTime]::Now.Year) $(Authors)</Copyright>
-    <PackageTags>api framework gaming modding plugins</PackageTags>
-    <TargetFrameworks>net46;net45;net40;net35</TargetFrameworks>
+    <PackageIconUrl>icon.png</PackageIconUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <TargetFrameworks>net35;net40;net45;net46;netstandard2.0;netstandard2.1</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <!--
-      Workaround for targeting net35 with dotnet CLI
-      https://github.com/Microsoft/msbuild/issues/1333#issuecomment-296346352
-    -->
-    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35' And '$(OS)' == 'Windows_NT'">C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
-    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35' And '$(OS)' == 'OSX'">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono/2.0-api</FrameworkPathOverride>
+    <NoWarn>NU1701;NU5128</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.13" />
+    <PackageReference Include="ILRepack" Version="2.0.18" />
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
     <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
@@ -35,21 +29,21 @@
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Target Name="AfterBuild">
     <ItemGroup>
-      <MergeAssemblies Include="$(OutputPath)\Oxide.References.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46'" Include="..\packages\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Include="..\packages\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
+      <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46' AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46' AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46' OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46' OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Include="$(NuGetPackageRoot)\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
       <MergeAssemblies Include="Dependencies\Mono.Posix.dll" />
-      <MergeAssemblies Include="Dependencies\Newtonsoft.Json.dll" /> <!-- .NET 3.5; doesn't have the System.Numerics reference that Mono is missing -->
+      <MergeAssemblies Include="Dependencies\Newtonsoft.Json.dll" /><!-- .NET 3.5; doesn't have the System.Numerics reference that Mono is missing -->
       <MergeAssemblies Include="Dependencies\protobuf-net.dll" />
     </ItemGroup>
     <PropertyGroup>
-      <OutputAssembly>$(OutputPath)\Oxide.References.dll</OutputAssembly>
-      <Merger>$(SolutionDir)\packages\ILRepack\2.0.13\tools\ILRepack.exe</Merger>
+      <OutputAssembly>$(TargetDir)\Oxide.References.dll</OutputAssembly>
+      <Merger>$(NuGetPackageRoot)\ILRepack\2.0.18\tools\ILRepack.exe</Merger>
     </PropertyGroup>
     <Message Text="MERGING: @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
-    <Exec Command="$(Merger) /lib:$(OutputPath) /out:&quot;$(OutputAssembly)&quot; @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+    <Exec Command="$(Merger) /lib:$(TargetDir) /out:&quot;$(OutputAssembly)&quot; @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
   </Target>
 </Project>
