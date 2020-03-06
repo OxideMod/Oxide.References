@@ -20,11 +20,14 @@
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
     <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
+    <Content Include="Dependencies\net40\*.*" PackagePath="lib\any\net40" />
     <Content Include="Dependencies\net46\*.*" PackagePath="lib\any\net46" />
-    <Content Include="Dependencies\x64\*.*" PackagePath="lib\any\x64" />
-    <Content Include="Dependencies\x86\*.*" PackagePath="lib\any\x86" />
-    <Content Include="Dependencies\Mono.*" Exclude="Dependencies\Mono.Posix.dll" PackagePath="lib\any" />
-    <Content Include="Dependencies\System.*" PackagePath="lib\any" />
+    <Content Include="Dependencies\netstandard2.0\*.*" PackagePath="lib\any\netstandard2.0" />
+    <Content Include="Dependencies\netstandard2.1\*.*" PackagePath="lib\any\netstandard2.1" />
+    <Content Include="Dependencies\any\x64\*.*" PackagePath="lib\any\x64" />
+    <Content Include="Dependencies\any\x86\*.*" PackagePath="lib\any\x86" />
+    <Content Include="Dependencies\any\Mono.*" Exclude="Dependencies\any\Mono.Posix.dll" PackagePath="lib\any" />
+    <Content Include="Dependencies\any\System.*" PackagePath="lib\any" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Target Name="AfterBuild">
