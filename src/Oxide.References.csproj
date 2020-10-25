@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/OxideMod/Oxide.References</RepositoryUrl>
     <PackageIconUrl>icon.png</PackageIconUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-    <TargetFrameworks>net35;net40;net45;net46;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net45;net46;net48;netstandard2.0;netstandard2.1</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <NoWarn>NU1701;NU5128</NoWarn>
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
     <Content Include="Dependencies\net40\*.*" PackagePath="lib\any\net40" />
     <Content Include="Dependencies\net46\*.*" PackagePath="lib\any\net46" />
+    <Content Include="Dependencies\net48\*.*" PackagePath="lib\any\net48" />
     <Content Include="Dependencies\netstandard2.0\*.*" PackagePath="lib\any\netstandard2.0" />
     <Content Include="Dependencies\netstandard2.1\*.*" PackagePath="lib\any\netstandard2.1" />
     <Content Include="Dependencies\any\x64\*.*" PackagePath="lib\any\x64" />
@@ -33,10 +34,10 @@
   <Target Name="AfterBuild">
     <ItemGroup>
       <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46' AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' != 'net46' AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46' OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="'$(TargetFramework)' == 'net46' OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="!$(TargetFramework.StartsWith('net4')) AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="!$(TargetFramework.StartsWith('net4')) AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
       <MergeAssemblies Include="$(NuGetPackageRoot)\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
       <MergeAssemblies Include="Dependencies\any\Mono.Posix.dll" />
       <MergeAssemblies Include="Dependencies\any\Newtonsoft.Json.dll" /><!-- .NET 3.5; doesn't have the System.Numerics reference that Mono is missing -->
