@@ -24,6 +24,16 @@
 	<PackageReference Include="Lib.Harmony" Version="2.2.2" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="protobuf-net" Version="2.4.8" />
+    <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
+    <Content Include="Dependencies\net40\*.*" PackagePath="lib\any\net40" />
+    <Content Include="Dependencies\net46\*.*" PackagePath="lib\any\net46" />
+    <Content Include="Dependencies\net48\*.*" PackagePath="lib\any\net48" />
+    <Content Include="Dependencies\netstandard2.0\*.*" PackagePath="lib\any\netstandard2.0" />
+    <Content Include="Dependencies\netstandard2.1\*.*" PackagePath="lib\any\netstandard2.1" />
+    <Content Include="Dependencies\any\x64\*.*" PackagePath="lib\any\x64" />
+    <Content Include="Dependencies\any\x86\*.*" PackagePath="lib\any\x86" />
+    <Content Include="Dependencies\any\Mono.*" Exclude="Dependencies\any\Mono.Posix.dll" PackagePath="lib\any" />
+    <Content Include="Dependencies\any\System.*" PackagePath="lib\any" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
   <Target Name="ILPack" AfterTargets="Build">
@@ -35,10 +45,32 @@
     </PropertyGroup>
     <ItemGroup>
       <RepackItems Include="$(TargetDir)Oxide.References.dll" />
-      <RepackItems Include="$(TargetDir)*.dll" Exclude="Oxide.*.dll" />
+
+      
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)0Harmony.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)lib.harmony\2.2.2\lib\net472\0Harmony.dll" />
+
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)Mono.Cecil.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)mono.cecil\0.11.5\lib\netstandard2.0\Mono.Cecil.dll" />
+
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)Mono.Cecil.Rocks.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)mono.cecil\0.11.5\lib\netstandard2.0\Mono.Cecil.Rocks.dll" />
+
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)Newtonsoft.Json.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)newtonsoft.json\13.0.3\lib\netstandard2.0\Newtonsoft.Json.dll" />
+      
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)websocket-sharp.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
+
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)protobuf-net.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)protobuf-net\2.4.8\lib\netstandard2.0\protobuf-net.dll" />
+
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)YamlDotNet.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)yamldotnet\13.7.1\lib\netstandard2.0\YamlDotNet.dll" />
+      
       <RepackItems Include="Dependencies\any\Mono.Posix.dll" />
     </ItemGroup>
-    <Message Text="MERGING: @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
+    <Message Text="MERGING $(TargetFramework): @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
     <Exec Command="$(ILRepack) /union /lib:$(ILRepackLib) /log:$(ILRepackLog) /out:$(ILRepackTarget) @(RepackItems->'&quot;%(FullPath)&quot;', ' ')" />
   </Target>
 </Project>
