@@ -17,37 +17,28 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ILRepack" Version="2.0.18" />
-    <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
+    <PackageReference Condition="$(TargetFramework) == 'net35'" Include="Mono.Cecil" Version="0.10.4" />
+    <PackageReference Condition="$(TargetFramework) != 'net35'" Include="Mono.Cecil" Version="0.11.5" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
-    <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
-    <Content Include="Dependencies\net40\*.*" PackagePath="lib\any\net40" />
-    <Content Include="Dependencies\net46\*.*" PackagePath="lib\any\net46" />
-    <Content Include="Dependencies\net48\*.*" PackagePath="lib\any\net48" />
-    <Content Include="Dependencies\netstandard2.0\*.*" PackagePath="lib\any\netstandard2.0" />
-    <Content Include="Dependencies\netstandard2.1\*.*" PackagePath="lib\any\netstandard2.1" />
-    <Content Include="Dependencies\any\x64\*.*" PackagePath="lib\any\x64" />
-    <Content Include="Dependencies\any\x86\*.*" PackagePath="lib\any\x86" />
-    <Content Include="Dependencies\any\Mono.*" Exclude="Dependencies\any\Mono.Posix.dll" PackagePath="lib\any" />
-    <Content Include="Dependencies\any\System.*" PackagePath="lib\any" />
+	<PackageReference Include="YamlDotNet" Version="13.7.1" />
+	<PackageReference Include="Lib.Harmony" Version="2.2.2" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="protobuf-net" Version="2.4.8" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
-      <MergeAssemblies Condition="!$(TargetFramework.StartsWith('net4')) AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="!$(TargetFramework.StartsWith('net4')) AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Include="$(NuGetPackageRoot)\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
-      <MergeAssemblies Include="Dependencies\any\Mono.Posix.dll" />
-      <MergeAssemblies Include="Dependencies\any\Newtonsoft.Json.dll" /><!-- .NET 3.5; doesn't have the System.Numerics reference that Mono is missing -->
-      <MergeAssemblies Include="Dependencies\any\protobuf-net.dll" />
-    </ItemGroup>
+  <Target Name="ILPack" AfterTargets="Build">
     <PropertyGroup>
-      <OutputAssembly>$(TargetDir)\Oxide.References.dll</OutputAssembly>
-      <Merger>$(NuGetPackageRoot)\ILRepack\2.0.18\tools\ILRepack.exe</Merger>
+      <ILRepack>$(NuGetPackageRoot)ILRepack\2.0.18\tools\ILRepack.exe</ILRepack>
+      <ILRepackLog>$(TargetDir)repack.log</ILRepackLog>
+      <ILRepackLib>$(TargetDir)</ILRepackLib>
+      <ILRepackTarget>$(TargetDir)Oxide.References.dll</ILRepackTarget>
     </PropertyGroup>
+    <ItemGroup>
+      <RepackItems Include="$(TargetDir)Oxide.References.dll" />
+      <RepackItems Include="$(TargetDir)*.dll" Exclude="Oxide.*.dll" />
+      <RepackItems Include="Dependencies\any\Mono.Posix.dll" />
+    </ItemGroup>
     <Message Text="MERGING: @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
-    <Exec Command="$(Merger) /lib:$(TargetDir) /out:&quot;$(OutputAssembly)&quot; @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+    <Exec Command="$(ILRepack) /union /lib:$(ILRepackLib) /log:$(ILRepackLog) /out:$(ILRepackTarget) @(RepackItems->'&quot;%(FullPath)&quot;', ' ')" />
   </Target>
 </Project>
