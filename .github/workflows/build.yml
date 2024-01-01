@@ -29,7 +29,9 @@ jobs:
           dotnet-version: 7.0.x
 
       - name: Build
-        run: dotnet build --nologo /p:Configuration=${{ env.BUILD }} /p:Version=1.1.0
+        run: |
+          dotnet restore --nologo
+          dotnet build --nologo /p:Configuration=${{ env.BUILD }} /p:Version=1.1.0
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3

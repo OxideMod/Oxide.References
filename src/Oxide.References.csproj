@@ -36,41 +36,39 @@
     <Content Include="Dependencies\any\System.*" PackagePath="lib\any" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-  <Target Name="ILPack" AfterTargets="Build">
+  <Target Name="ILPack" Condition="$(TargetFramework) != ''" AfterTargets="Build">
     <PropertyGroup>
       <ILRepack>$(NuGetPackageRoot)ILRepack\2.0.18\tools\ILRepack.exe</ILRepack>
-      <ILRepackLog>$(TargetDir)repack.log</ILRepackLog>
-      <ILRepackLib>$(TargetDir)</ILRepackLib>
-      <ILRepackTarget>$(TargetDir)Oxide.References.dll</ILRepackTarget>
+      <ILRepackOutPath>bin\$(Configuration)\$(TargetFramework)\</ILRepackOutPath>
+      <ILRepackLog>$(ILRepackOutPath)repack.log</ILRepackLog>
+      <ILRepackLib>$(ILRepackOutPath)</ILRepackLib>
+      <ILRepackTarget>$(ILRepackOutPath)Oxide.References.dll</ILRepackTarget>
     </PropertyGroup>
     <ItemGroup>
-      <RepackItems Include="$(TargetDir)Oxide.References.dll" />
-
-      
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)0Harmony.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)0Harmony.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)lib.harmony\2.2.2\lib\net472\0Harmony.dll" />
 
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)Mono.Cecil.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)Mono.Cecil.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)mono.cecil\0.11.5\lib\netstandard2.0\Mono.Cecil.dll" />
 
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)Mono.Cecil.Rocks.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)Mono.Cecil.Rocks.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)mono.cecil\0.11.5\lib\netstandard2.0\Mono.Cecil.Rocks.dll" />
 
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)Newtonsoft.Json.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)Newtonsoft.Json.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)newtonsoft.json\13.0.3\lib\netstandard2.0\Newtonsoft.Json.dll" />
       
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)websocket-sharp.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)websocket-sharp.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
 
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)protobuf-net.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)protobuf-net.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)protobuf-net\2.4.8\lib\netstandard2.0\protobuf-net.dll" />
 
-      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(TargetDir)YamlDotNet.dll" />
+      <RepackItems Condition="$(TargetFramework.StartsWith('netstandard')) == 'false'" Include="$(ILRepackOutPath)YamlDotNet.dll" />
       <RepackItems Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)yamldotnet\13.7.1\lib\netstandard2.0\YamlDotNet.dll" />
       
       <RepackItems Include="Dependencies\any\Mono.Posix.dll" />
     </ItemGroup>
     <Message Text="MERGING $(TargetFramework): @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
-    <Exec Command="$(ILRepack) /union /lib:$(ILRepackLib) /log:$(ILRepackLog) /out:$(ILRepackTarget) @(RepackItems->'&quot;%(FullPath)&quot;', ' ')" />
+    <Exec ContinueOnError="WarnAndContinue" Command="$(ILRepack) /union /lib:$(ILRepackLib) /log:$(ILRepackLog) /out:$(ILRepackTarget) @(RepackItems->'&quot;%(FullPath)&quot;', ' ')" />
   </Target>
 </Project>
