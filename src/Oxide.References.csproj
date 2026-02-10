@@ -16,10 +16,11 @@
     <NoWarn>NU1701;NU5128</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.18" />
+    <PackageReference Include="ILRepack" Version="2.0.18" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="Mono.Cecil" Version="0.10.4" GeneratePathProperty="true" PrivateAssets="all" Condition="$(TargetFramework) == 'net35'" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.6" GeneratePathProperty="true" PrivateAssets="all" Condition="$(TargetFramework) != 'net35'" />
+    <PackageReference Include="WebSocketSharpFork" Version="1.0.4" GeneratePathProperty="true" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" GeneratePathProperty="true" PrivateAssets="all" />
-    <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
-    <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
     <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
     <Content Include="Dependencies\net40\*.*" PackagePath="lib\any\net40" />
     <Content Include="Dependencies\net46\*.*" PackagePath="lib\any\net46" />
@@ -35,21 +36,23 @@
   <Target Name="AfterBuild">
     <ItemGroup>
       <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
-      <MergeAssemblies Condition="!$(TargetFramework.StartsWith('net4')) AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="!$(TargetFramework.StartsWith('net4')) AND !$(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\$(TargetFramework)\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
-      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
-      <MergeAssemblies Include="$(NuGetPackageRoot)\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
+      <MergeAssemblies Condition="$(TargetFramework) == 'net35'" Include="$(PkgMono_Cecil)\lib\net35\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="$(TargetFramework) == 'net35'" Include="$(PkgMono_Cecil)\lib\net35\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4'))" Include="$(PkgMono_Cecil)\lib\net40\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4'))" Include="$(PkgMono_Cecil)\lib\net40\Mono.Cecil.Rocks.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(PkgMono_Cecil)\lib\netstandard2.0\Mono.Cecil.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(PkgMono_Cecil)\lib\netstandard2.0\Mono.Cecil.Rocks.dll" />
       <MergeAssemblies Condition="$(TargetFramework) == 'net35'" Include="$(PkgNewtonsoft_Json)\lib\net20\Newtonsoft.Json.dll" />
       <MergeAssemblies Condition="$(TargetFramework) == 'net40'" Include="$(PkgNewtonsoft_Json)\lib\net40\Newtonsoft.Json.dll" />
       <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) AND $(TargetFramework) != 'net40'" Include="$(PkgNewtonsoft_Json)\lib\net45\Newtonsoft.Json.dll" />
       <MergeAssemblies Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" />
+      <MergeAssemblies Include="$(PkgWebSocketSharpFork)\lib\net35\websocket-sharp.dll" />
       <MergeAssemblies Include="Dependencies\any\Mono.Posix.dll" />
       <MergeAssemblies Include="Dependencies\any\protobuf-net.dll" />
     </ItemGroup>
     <PropertyGroup>
       <OutputAssembly>$(TargetDir)\Oxide.References.dll</OutputAssembly>
-      <Merger>$(NuGetPackageRoot)\ILRepack\2.0.18\tools\ILRepack.exe</Merger>
+      <Merger>$(PkgILRepack)\tools\ILRepack.exe</Merger>
     </PropertyGroup>
     <Message Text="MERGING: @(MergeAssemblies->'%(Filename)') into $(OutputAssembly)" Importance="High" />
     <Exec Command="$(Merger) /lib:$(TargetDir) /out:&quot;$(OutputAssembly)&quot; @(MergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
