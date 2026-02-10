@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
   <Import Project="..\netfx.props" />
@@ -17,6 +17,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ILRepack" Version="2.0.18" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" GeneratePathProperty="true" PrivateAssets="all" />
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" />
     <Content Include="Dependencies\net35\*.*" PackagePath="lib\any\net35" />
@@ -39,8 +40,11 @@
       <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.dll" />
       <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) OR $(TargetFramework.StartsWith('netstandard'))" Include="$(NuGetPackageRoot)\mono.cecil\0.9.6.4\lib\net40\Mono.Cecil.Rocks.dll" />
       <MergeAssemblies Include="$(NuGetPackageRoot)\websocketsharpfork\1.0.4\lib\net35\websocket-sharp.dll" />
+      <MergeAssemblies Condition="$(TargetFramework) == 'net35'" Include="$(PkgNewtonsoft_Json)\lib\net20\Newtonsoft.Json.dll" />
+      <MergeAssemblies Condition="$(TargetFramework) == 'net40'" Include="$(PkgNewtonsoft_Json)\lib\net40\Newtonsoft.Json.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('net4')) AND $(TargetFramework) != 'net40'" Include="$(PkgNewtonsoft_Json)\lib\net45\Newtonsoft.Json.dll" />
+      <MergeAssemblies Condition="$(TargetFramework.StartsWith('netstandard'))" Include="$(PkgNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" />
       <MergeAssemblies Include="Dependencies\any\Mono.Posix.dll" />
-      <MergeAssemblies Include="Dependencies\any\Newtonsoft.Json.dll" /><!-- .NET 3.5; doesn't have the System.Numerics reference that Mono is missing -->
       <MergeAssemblies Include="Dependencies\any\protobuf-net.dll" />
     </ItemGroup>
     <PropertyGroup>
