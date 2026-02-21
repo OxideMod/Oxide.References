@@ -32,16 +32,43 @@
     <Content Include="Dependencies\any\System.*" PackagePath="lib\any" />
   </ItemGroup>
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
-  <Target Name="AfterBuild">
+  <ItemGroup>
+    <ManualMergeAssembly Include="Mono.Posix">
+      <SourcePath>Dependencies\any\Mono.Posix.dll</SourcePath>
+    </ManualMergeAssembly>
+    <ManualMergeAssembly Include="protobuf-net">
+      <SourcePath>Dependencies\any\protobuf-net.dll</SourcePath>
+    </ManualMergeAssembly>
+  </ItemGroup>
+  <Target Name="ComputeMergeAssemblies" AfterTargets="ResolveAssemblyReferences" BeforeTargets="CoreCompile">
     <ItemGroup>
-      <NuGetMergeAssemblies Include="@(ReferenceCopyLocalPaths)" Condition="'%(Extension)' == '.dll' and '%(NuGetPackageId)' != 'ILRepack'" />
-    </ItemGroup>
-    <ItemGroup>
+      <!-- NuGet DLLs eligible for merging: all CopyLocal DLLs except the build tool and polyfills -->
+      <NuGetMergeAssemblies Include="@(ReferenceCopyLocalPaths)" Condition="
+        '%(Extension)' == '.dll'
+        and '%(NuGetPackageId)' != 'ILRepack'
+        and '%(NuGetPackageId)' != 'System.Memory'
+        and '%(NuGetPackageId)' != 'System.Buffers'
+        and '%(NuGetPackageId)' != 'System.Numerics.Vectors'
+        and '%(NuGetPackageId)' != 'System.Runtime.CompilerServices.Unsafe'
+        and '%(NuGetPackageId)' != 'System.Threading.Tasks.Extensions'
+        and '%(NuGetPackageId)' != 'Microsoft.Bcl.AsyncInterfaces'" />
       <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
       <MergeAssemblies Include="@(NuGetMergeAssemblies)" />
-      <MergeAssemblies Include="Dependencies\any\Mono.Posix.dll" />
-      <MergeAssemblies Include="Dependencies\any\protobuf-net.dll" />
+      <MergeAssemblies Include="@(ManualMergeAssembly->'%(SourcePath)')" />
+      <!-- Embed [AssemblyMetadata("Oxide.MergedAssembly", "name")] for each merged assembly.
+           Oxide.CSharp reads these at runtime to dynamically skip game DLLs whose types
+           are already inside Oxide.References. -->
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'%(NuGetMergeAssemblies.Filename)' != ''">
+        <_Parameter1>Oxide.MergedAssembly</_Parameter1>
+        <_Parameter2>%(NuGetMergeAssemblies.Filename)</_Parameter2>
+      </AssemblyAttribute>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'%(ManualMergeAssembly.Identity)' != ''">
+        <_Parameter1>Oxide.MergedAssembly</_Parameter1>
+        <_Parameter2>%(ManualMergeAssembly.Identity)</_Parameter2>
+      </AssemblyAttribute>
     </ItemGroup>
+  </Target>
+  <Target Name="ILRepackMerge" AfterTargets="Build" DependsOnTargets="ComputeMergeAssemblies">
     <PropertyGroup>
       <OutputAssembly>$(TargetDir)\Oxide.References.dll</OutputAssembly>
       <Merger>$(PkgILRepack)\tools\ILRepack.exe</Merger>
