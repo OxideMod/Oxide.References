@@ -68,7 +68,7 @@
       </AssemblyAttribute>
     </ItemGroup>
   </Target>
-  <Target Name="ILRepackMerge" AfterTargets="Build" DependsOnTargets="ComputeMergeAssemblies">
+  <Target Name="AfterBuild">
     <PropertyGroup>
       <OutputAssembly>$(TargetDir)\Oxide.References.dll</OutputAssembly>
       <Merger>$(PkgILRepack)\tools\ILRepack.exe</Merger>
