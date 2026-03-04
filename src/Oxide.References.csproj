@@ -17,7 +17,7 @@
     <NoWarn>NU1701;NU5128</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.18" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="ILRepack" Version="2.0.44" GeneratePathProperty="true" PrivateAssets="all" />
     <PackageReference Include="Mono.Cecil" Version="0.11.6" PrivateAssets="all" />
     <PackageReference Include="WebSocketSharpFork" Version="1.0.4" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" PrivateAssets="all" />
@@ -55,8 +55,7 @@
         and '%(NuGetPackageId)' != 'System.Numerics.Vectors'
         and '%(NuGetPackageId)' != 'System.Runtime.CompilerServices.Unsafe'
         and '%(NuGetPackageId)' != 'System.Threading.Tasks.Extensions'
-        and '%(NuGetPackageId)' != 'Microsoft.Bcl.AsyncInterfaces'
-        and '%(NuGetPackageId)' != 'System.ValueTuple'" />
+        and '%(NuGetPackageId)' != 'Microsoft.Bcl.AsyncInterfaces'" />
       <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
       <MergeAssemblies Include="@(NuGetMergeAssemblies)" />
       <MergeAssemblies Include="@(ManualMergeAssembly->'%(SourcePath)')" />
