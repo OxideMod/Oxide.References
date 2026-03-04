@@ -23,6 +23,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" PrivateAssets="all" />
     <PackageReference Include="ZString" Version="2.6.0" PrivateAssets="all" />
     <PackageReference Include="System.Text.Json" Version="8.0.6" PrivateAssets="all" />
+
+    <!-- BCL polyfill excluded from ILRepack merge — must flow as dependencies -->
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+
     <Content Include="Dependencies\net48\*.*" PackagePath="lib\any\net48" />
     <Content Include="Dependencies\netstandard2.0\*.*" PackagePath="lib\any\netstandard2.0" />
     <Content Include="Dependencies\netstandard2.1\*.*" PackagePath="lib\any\netstandard2.1" />
