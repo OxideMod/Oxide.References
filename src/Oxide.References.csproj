@@ -51,7 +51,8 @@
         and '%(NuGetPackageId)' != 'System.Numerics.Vectors'
         and '%(NuGetPackageId)' != 'System.Runtime.CompilerServices.Unsafe'
         and '%(NuGetPackageId)' != 'System.Threading.Tasks.Extensions'
-        and '%(NuGetPackageId)' != 'Microsoft.Bcl.AsyncInterfaces'" />
+        and '%(NuGetPackageId)' != 'Microsoft.Bcl.AsyncInterfaces'
+        and '%(NuGetPackageId)' != 'System.ValueTuple'" />
       <MergeAssemblies Include="$(TargetDir)\Oxide.References.dll" />
       <MergeAssemblies Include="@(NuGetMergeAssemblies)" />
       <MergeAssemblies Include="@(ManualMergeAssembly->'%(SourcePath)')" />
